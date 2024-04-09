@@ -3,6 +3,7 @@ import { createContext, useReducer } from "react";
 export const PostList = createContext({
   postList: [],
   addPost: () => {},
+  addIntialPosts: () => {},
   deletePost: () => {},
 });
 
@@ -12,6 +13,8 @@ const postListReducer = (currPostList, action) => {
     newPostList = currPostList.filter(
       (post) => post.id !== action.payload.postId
     );
+  } else if (action.type === "ADD_INITIAL_POSTS") {
+    newPostList = action.payload.posts;
   } else if (action.type === "ADD_POST") {
     newPostList = [action.payload, ...currPostList];
   }
@@ -19,20 +22,25 @@ const postListReducer = (currPostList, action) => {
 };
 
 const PostListProvider = ({ children }) => {
-  const [postList, dispatchPostList] = useReducer(
-    postListReducer,
-    DEFAULT_POSTLIST
-  );
-  const addPost = (userId, postTitle, postBody, reaction, tags) => {
+  const [postList, dispatchPostList] = useReducer(postListReducer, []);
+  const addPost = (userId, postTitle, postBody, reactions, tags) => {
     dispatchPostList({
       type: "ADD_POST",
       payload: {
         id: Date.now(),
         title: postTitle,
         body: postBody,
-        reaction: reaction,
+        reactions: reactions,
         userId: userId,
         tags: tags,
+      },
+    });
+  };
+  const addIntialPosts = (posts) => {
+    dispatchPostList({
+      type: "ADD_INITIAL_POSTS",
+      payload: {
+        posts: posts,
       },
     });
   };
@@ -48,28 +56,12 @@ const PostListProvider = ({ children }) => {
         postList: postList,
         addPost: addPost,
         deletePost: deletePost,
+        addIntialPosts: addIntialPosts,
       }}
     >
       {children}
     </PostList.Provider>
   );
 };
-const DEFAULT_POSTLIST = [
-  {
-    id: "1",
-    title: "Going to Mumbai",
-    body: "Hello everyone going mumbai for vacation",
-    reaction: "2",
-    userId: "user-9",
-    tags: ["vacation", "enjoying"],
-  },
-  {
-    id: "2",
-    title: "React Project",
-    body: "Hello every creating a new React Project for Frontend",
-    reaction: "4",
-    userId: "user-10",
-    tags: ["react", "learn"],
-  },
-];
+
 export default PostListProvider;

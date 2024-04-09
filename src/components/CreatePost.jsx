@@ -13,9 +13,9 @@ const CreatePost = (props) => {
     const userId = userIdElement.current.value;
     const postTitle = postTitleElement.current.value;
     const postBody = postBodyElement.current.value;
-    const reaction = reactionElement.current.value;
+    const reactions = reactionElement.current.value;
     const tags = tagsElement.current.value.split(" ");
-    addPost(userId, postTitle, postBody, reaction, tags);
+    addPost(userId, postTitle, postBody, reactions, tags);
 
     userIdElement.current.value = "";
     postTitleElement.current.value = "";
